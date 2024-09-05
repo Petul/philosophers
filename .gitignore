@@ -1,0 +1,4 @@
+philo/philosophers
+*.o
+*.swp
+*.swo
