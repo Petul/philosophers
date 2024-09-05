@@ -6,14 +6,15 @@
 #    By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/04 14:53:17 by pleander          #+#    #+#              #
-#    Updated: 2024/09/04 14:55:27 by pleander         ###   ########.fr        #
+#    Updated: 2024/09/05 14:27:10 by pleander         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := philosophers
 CC := cc
-CFLAGS := -Wall -Wextra -Werror
-CFILES := ft_atoi.c main.c
+#CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra
+CFILES := ft_atoi.c main.c philosopher.c forks.c
 
 OBJECTS := $(CFILES:.c=.o)
 
