@@ -19,9 +19,8 @@ void	destroy_forks(pthread_mutex_t *forks, int n_forks)
 
 	i = 0;
 	while (i < n_forks)
-	{
 		pthread_mutex_destroy(&forks[i]);
-	}
+	free(forks);
 }
 
 pthread_mutex_t	*create_forks(int n_forks)

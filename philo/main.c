@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:07:39 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/06 15:26:47 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/09 13:09:49 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,22 +37,6 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	return (0);
 }
 
-// static void	init_philosopher_memory(t_philosopher_memory *m, t_settings *s, pthread_mutex_t *forks)
-// {
-// 		if (m->id % 2)
-// 			m->state = THINKING;
-// 		else
-// 			m->state = EATING;
-// 		m->settings = s;
-// 		m->fork1 = &forks[m->id];
-// 		if (m->id + 1 >= s->n_philos)
-// 			m->fork2 = &forks[0];
-// 		else
-// 			m->fork2 = &forks[m->id + 1];
-// 		m->state_start_time = 0;
-// 		m->sim_start_time = get_milliseconds();
-// 		m->last_meal = m->sim_start_time;
-// }
 
 // static	int	watch_philosophers(t_philosopher_memory *m, int n_philos)
 // {
@@ -61,62 +45,77 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 // 	i = 0;
 //
 // }
-// static int	philo(t_settings *s, pthread_t *philosophers, pthread_mutex_t *forks)
-// {
-// 	t_philosopher_memory	*p;
-// 	int				i;
-// 	ssize_t			sim_start_time;
-// 	uint8_t			sim_running;
-// 	pthread_mutex_t	sim_running_mtx;
-//
-// 	sim_running = 1;
-// 	if (pthread_mutex_init(&sim_running_mtx, NULL) != 0)
-// 		return (1);
-// 	p = malloc(sizeof(t_philosopher_memory) * s->n_philos);
-// 	if (!p)
-// 		return (1);
-// 	i = 0;
-// 	sim_start_time = get_milliseconds();
-// 	if (sim_start_time < 0)
-// 	{
-// 		free(p);
-// 		return (1);
-// 	}
-// 	while (i < s->n_philos)
-// 	{
-// 		p[i].id = i;
-// 		p[i].sim_start_time = sim_start_time;
-// 		p[i].sim_running  = &sim_running;
-// 		p[i].sim_running_mtx = &sim_running_mtx;
-// 		init_philosopher_memory(&p[i], s, forks);
-// 		pthread_create(&philosophers[i], NULL, &philosopher, &p[i]);
-// 		i++;
-// 	}
-// 	i = 0;
-// 	while (i < s->n_philos)
-// 	{
-// 		pthread_join(philosophers[i], NULL); 
-// 		i++;
-// 	}
-// 	return (0);
-// }
 
-t_table	*prepare_table(t_settings *s)
-{
-
-}
-
-static int	philosophers(t_settings s)
+t_table	*prepare_table(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_philos)
 {
 	t_table	*table;
 
-
+	table = malloc(sizeof(t_table));
+	if (!table)
+		return (NULL);
+	table->n_philos = s->n_philos;
+	table->th_philos = th_philos;
+	table->mtx_forks = mtx_forks;
+	return (table);
 }
+
+static t_own_knowledge	*prepare_philos(t_settings *s, t_shared_knowledge *sk, t_table *table)
+{
+	t_own_knowledge	*ok;
+	int	i;
+
+	ok = calloc(s->n_philos, sizeof(t_own_knowledge));
+	if (!ok)
+		return (NULL);
+	i = 0;
+	while (i < s->n_philos)
+	{
+		ok[i].id = i;
+		ok[i].cs = THINK;
+		ok[i].mtx_fork1 = &table->mtx_forks[i];
+		if (i + 1 >= s->n_philos)
+			ok[i].mtx_fork2 = &table->mtx_forks[0];
+		else
+			ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
+		ok[i].sk = sk;
+		pthread_mutex_init(&ok[i].mtx_last_meal, NULL); // Handle failure
+		i++;
+	}
+	return (ok);
+}
+
+
+static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_philos)
+{
+	t_table				*table;
+	t_own_knowledge		*ok;
+	t_shared_knowledge	*sk;
+
+	table = prepare_table(s, mtx_forks, th_philos);
+	if (!table)
+		return (-1);
+	sk = create_shared_knowledge(s);
+	if (!sk)
+	{
+		free(table);
+		return (1);
+	}
+	ok = prepare_philos(s, sk, table);
+	if (!ok)
+	{
+		destroy_shared_knowledge(sk);
+		free(table);
+		return (1);
+	}
+	return (run_simulation(table, ok));
+}
+
 int	main(int argc, char **argv)
 {
 	pthread_t		*th_philos;
 	pthread_mutex_t	*mtx_forks;
 	t_settings		s;
+	int				retval;
 
 	if (argc < 5 || argc > 6)
 	{
@@ -134,7 +133,12 @@ int	main(int argc, char **argv)
 		free(mtx_forks);
 		return (1);
 	}
-	philosophers(s);
+	retval = 0;
+	if (philosophers(&s, mtx_forks, th_philos) < 0)
+		retval = 1;
+	destroy_forks(mtx_forks, s.n_philos);
+	free(th_philos);
+	return (retval);
 }
 
 
