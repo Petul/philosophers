@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 11:07:07 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/09 12:57:52 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/10 09:43:29 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ static int	start_sleeping(t_own_knowledge *ok)
 	ok->t_cs_start = get_milliseconds();
 	if (ok->t_cs_start < 0)
 		return (-1);
-	if (pthread_mutex_lock(&ok->sk->print_mtx) < 0)
-		return (-1);
-	printf("%04zu %d is sleeping\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id);
-	if (pthread_mutex_unlock(&ok->sk->print_mtx) < 0)
+	if (philo_print(ok, "%04zu %d is sleeping\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -36,10 +33,7 @@ static int	start_thinking(t_own_knowledge *ok)
 	ok->t_cs_start = get_milliseconds();
 	if (ok->t_cs_start < 0)
 		return (-1);
-	if (pthread_mutex_lock(&ok->sk->print_mtx) < 0)
-		return (-1);
-	printf("%04zu %d is thinking\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id);
-	if (pthread_mutex_unlock(&ok->sk->print_mtx) < 0)
+	if (philo_print(ok, "%04zu %d is thinking\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -50,10 +44,7 @@ static int	start_eating(t_own_knowledge *ok)
 	ok->t_cs_start = get_milliseconds();
 	if (ok->t_cs_start < 0)
 		return (-1);
-	if (pthread_mutex_lock(&ok->sk->print_mtx) < 0)
-		return (-1);
-	printf("%04zu %d is eating\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id);
-	if (pthread_mutex_unlock(&ok->sk->print_mtx) < 0)
+	if (philo_print(ok, "%04zu %d is eating\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -67,20 +58,14 @@ static int	get_forks(t_own_knowledge *ok)
 	t = get_milliseconds();
 	if (!t)
 		return (-1);
-	if (pthread_mutex_lock(&ok->sk->print_mtx) < 0)
-		return (-1);
-	printf("%04zu %d has taken a fork\n", t - ok->sk->t_sim_start, ok->id);
-	if (pthread_mutex_unlock(&ok->sk->print_mtx) < 0)
+	if (philo_print(ok, "%04zu %d has taken a fork\n", t - ok->sk->t_sim_start, ok->id) < 0)
 		return (-1);
 	if (pthread_mutex_lock(ok->mtx_fork2) < 0)
 		return (-1);
 	t = get_milliseconds();
 	if (!t)
 		return (-1);
-	if (pthread_mutex_lock(&ok->sk->print_mtx) < 0)
-		return (-1);
-	printf("%04zu %d has taken a fork\n", t - ok->sk->t_sim_start, ok->id);
-	if (pthread_mutex_unlock(&ok->sk->print_mtx) < 0)
+	if (philo_print(ok, "%04zu %d has taken a fork\n", t - ok->sk->t_sim_start, ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -110,6 +95,12 @@ static int	delay_start(t_own_knowledge *ok)
 	return (1);
 }
 
+static void *error_exit(void)
+{
+	printf("Error\n");
+	return (NULL);
+}
+
 void	*philosopher(void *own_knowledge)
 {
 	t_own_knowledge			*ok;
@@ -118,7 +109,8 @@ void	*philosopher(void *own_knowledge)
 	ok = (t_own_knowledge *)own_knowledge;
 	if (delay_start(ok) < 0)
 		return (NULL);
-	start_thinking(ok);
+	if (start_thinking(ok) < 0)
+		return (error_exit());
 	while (1)
 	{
 		time_now = get_milliseconds();
@@ -127,19 +119,24 @@ void	*philosopher(void *own_knowledge)
 		if (ok->cs == SLEEP)
 		{
 			if (time_now - ok->t_cs_start >= ok->sk->t_sleep)
-				start_thinking(ok);
+				if (start_thinking(ok) < 0)
+					return (error_exit());
 		}
 		else if (ok->cs == THINK)
 		{
-			get_forks(ok);
-			start_eating(ok);
+			if (get_forks(ok) < 0)
+				return (error_exit());
+			if (start_eating(ok) < 0)
+				return (error_exit());
 		}
 		else if (ok->cs == EAT)
 		{
 			if (time_now - ok->t_cs_start >= ok->sk->t_eat)
 			{
-				return_forks(ok);
-				start_sleeping(ok);
+				if (return_forks(ok) < 0)
+					return (error_exit());
+				if (start_sleeping(ok) < 0)
+					return (error_exit());
 			}
 		}
 	}
