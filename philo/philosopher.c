@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 11:07:07 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/10 09:43:29 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/10 10:00:32 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,7 @@
 static int	start_sleeping(t_own_knowledge *ok)
 {
 	ok->cs = SLEEP;
-	ok->t_cs_start = get_milliseconds();
-	if (ok->t_cs_start < 0)
-		return (-1);
-	if (philo_print(ok, "%04zu %d is sleeping\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id) < 0)
+	if (philo_print(ok, "%04zu %d is sleeping\n", ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -33,7 +30,7 @@ static int	start_thinking(t_own_knowledge *ok)
 	ok->t_cs_start = get_milliseconds();
 	if (ok->t_cs_start < 0)
 		return (-1);
-	if (philo_print(ok, "%04zu %d is thinking\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id) < 0)
+	if (philo_print(ok, "%04zu %d is thinking\n", ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -44,7 +41,7 @@ static int	start_eating(t_own_knowledge *ok)
 	ok->t_cs_start = get_milliseconds();
 	if (ok->t_cs_start < 0)
 		return (-1);
-	if (philo_print(ok, "%04zu %d is eating\n", ok->t_cs_start - ok->sk->t_sim_start, ok->id) < 0)
+	if (philo_print(ok, "%04zu %d is eating\n", ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -55,17 +52,11 @@ static int	get_forks(t_own_knowledge *ok)
 
 	if (pthread_mutex_lock(ok->mtx_fork1) < 0)
 		return (-1);
-	t = get_milliseconds();
-	if (!t)
-		return (-1);
-	if (philo_print(ok, "%04zu %d has taken a fork\n", t - ok->sk->t_sim_start, ok->id) < 0)
+	if (philo_print(ok, "%04zu %d has taken a fork\n",  ok->id) < 0)
 		return (-1);
 	if (pthread_mutex_lock(ok->mtx_fork2) < 0)
 		return (-1);
-	t = get_milliseconds();
-	if (!t)
-		return (-1);
-	if (philo_print(ok, "%04zu %d has taken a fork\n", t - ok->sk->t_sim_start, ok->id) < 0)
+	if (philo_print(ok, "%04zu %d has taken a fork\n",  ok->id) < 0)
 		return (-1);
 	return (0);
 }
@@ -139,6 +130,7 @@ void	*philosopher(void *own_knowledge)
 					return (error_exit());
 			}
 		}
+		usleep(500);
 	}
 	pthread_exit(0);
 }

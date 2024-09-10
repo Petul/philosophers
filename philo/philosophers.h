@@ -64,6 +64,6 @@ ssize_t		get_milliseconds(void);
 void	destroy_shared_knowledge(t_shared_knowledge	*sk);
 t_shared_knowledge	*create_shared_knowledge(t_settings *s);
 int	run_simulation(t_table *table, t_own_knowledge *ok);
-int	philo_print(t_own_knowledge *ok, char *fstr, size_t time, int id);
+int	philo_print(t_own_knowledge *ok, char *fstr, int id);
 
 #endif
