@@ -13,7 +13,7 @@
 NAME := philosophers
 CC := cc
 #CFLAGS := -Wall -Wextra -Werror
-CFLAGS := -Wall -Wextra -O2
+CFLAGS := -Wall -Wextra -g
 CFILES := forks.c \
 		  ft_atoi.c \
 		  main.c \

@@ -16,10 +16,12 @@
 int	run_simulation(t_table *table, t_own_knowledge *ok)
 {
 	int		i;
+	ssize_t	sim_start;
 
-	ok->sk->t_sim_start = get_milliseconds();
-	if (ok->sk->t_sim_start < 0)
+	sim_start = get_milliseconds();
+	if (sim_start < 0)
 		return (-1);
+	ok->sk->t_sim_start = sim_start;
 	ok->sk->t_sim_start += START_DELAY;
 	i = 0;
 	while (i < table->n_philos)

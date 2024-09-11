@@ -11,9 +11,9 @@
 
 typedef enum e_state
 {
-	THINK = 1,
-	EAT,
-	SLEEP,
+	THINKING = 1,
+	EATING,
+	SLEEPING,
 } t_state;
 
 typedef struct s_settings
@@ -34,18 +34,22 @@ typedef struct s_shared_knowledge
 	uint8_t				sim_running;
 	pthread_mutex_t		sim_running_mtx;
 	pthread_mutex_t		print_mtx;
+	pthread_mutex_t		take_forks_mtx;
 
 }	t_shared_knowledge;
 
 typedef struct s_own_knowledge
 {
-	int					id;
-	t_state				cs;
-	size_t				t_cs_start;
-	size_t				t_last_meal;
-	pthread_mutex_t		mtx_last_meal;
-	pthread_mutex_t		*mtx_fork1;
-	pthread_mutex_t		*mtx_fork2;
+	int						id;
+	t_state					cs;
+	ssize_t					t_cs_start;
+	ssize_t					t_last_meal;
+	pthread_mutex_t			mtx_last_meal;
+	pthread_mutex_t			mtx_state;
+	pthread_mutex_t			*mtx_fork1;
+	pthread_mutex_t			*mtx_fork2;
+	struct s_own_knowledge	*left_philo;
+	struct s_own_knowledge	*right_philo;
 	t_shared_knowledge	*sk;
 }	t_own_knowledge;
 

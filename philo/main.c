@@ -21,11 +21,11 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	s->n_philos = ft_atoi(argv[1]);
 	if (s->n_philos < 1)
 		return (-1);
-	s->t_die = (size_t)ft_atoi(argv[2]);
-	s->t_eat = (size_t)ft_atoi(argv[3]);
-	s->t_sleep = (size_t)ft_atoi(argv[4]);
-	if (s->t_die < 0 || s->t_eat < 0 || s->t_sleep < 0)
+	if (ft_atoi(argv[2]) < 0 || ft_atoi(argv[3]) < 0 || ft_atoi(argv[4]) < 0)
 		return (-1);
+	s->t_die = (size_t)ft_atoi(argv[2]);
+	s->t_eat = (size_t)ft_atoi(argv[3]) * 1000;
+	s->t_sleep = (size_t)ft_atoi(argv[4]) * 1000;
 	if (argc == 6)
 	{
 		s->n_eat = ft_atoi(argv[5]);
@@ -71,14 +71,23 @@ static t_own_knowledge	*prepare_philos(t_settings *s, t_shared_knowledge *sk, t_
 	while (i < s->n_philos)
 	{
 		ok[i].id = i;
-		ok[i].cs = THINK;
+		ok[i].cs = THINKING;
 		ok[i].mtx_fork1 = &table->mtx_forks[i];
+		if (i == 0)
+			ok[i].left_philo = &ok[s->n_philos - 1];
+		else
+			ok[i].left_philo = &ok[i - 1];
+		if (i == s->n_philos - 1)
+			ok[i].right_philo = &ok[0];
+		else
+			ok[i].right_philo = &ok[i + 1];
 		if (i + 1 >= s->n_philos)
 			ok[i].mtx_fork2 = &table->mtx_forks[0];
 		else
 			ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
 		ok[i].sk = sk;
 		pthread_mutex_init(&ok[i].mtx_last_meal, NULL); // Handle failure
+		pthread_mutex_init(&ok[i].mtx_state, NULL); // Handle failure
 		i++;
 	}
 	return (ok);

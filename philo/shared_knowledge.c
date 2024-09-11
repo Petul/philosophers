@@ -41,5 +41,10 @@ t_shared_knowledge	*create_shared_knowledge(t_settings *s)
 		free(sk);
 		return (NULL);
 	}
+	if (pthread_mutex_init(&sk->take_forks_mtx, NULL) < 0)
+	{
+		free(sk);
+		return (NULL);
+	}
 	return (sk);
 }
