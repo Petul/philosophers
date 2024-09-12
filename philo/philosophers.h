@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <pthread.h>
 
-#define START_DELAY 10
+#define START_DELAY 100
 
 typedef enum e_state
 {
@@ -42,8 +42,9 @@ typedef struct s_own_knowledge
 {
 	int						id;
 	t_state					cs;
-	ssize_t					t_cs_start;
 	ssize_t					t_last_meal;
+	int						n_meals;
+	pthread_mutex_t			mtx_n_meals;
 	pthread_mutex_t			mtx_last_meal;
 	pthread_mutex_t			mtx_state;
 	pthread_mutex_t			*mtx_fork1;
@@ -56,6 +57,7 @@ typedef struct s_own_knowledge
 typedef	struct	s_table
 {
 	int				n_philos;
+	int				n_eat;
 	pthread_t		*th_philos;
 	pthread_mutex_t	*mtx_forks;
 }	t_table;
@@ -69,5 +71,12 @@ void	destroy_shared_knowledge(t_shared_knowledge	*sk);
 t_shared_knowledge	*create_shared_knowledge(t_settings *s);
 int	run_simulation(t_table *table, t_own_knowledge *ok);
 int	philo_print(t_own_knowledge *ok, char *fstr, int id);
+int	print_eat(t_own_knowledge *ok);
+int	print_died(t_own_knowledge *ok, int id, size_t t_death);
+int	wait_or_exit(t_shared_knowledge *sk, size_t	msec);
+int	is_sim_running(t_shared_knowledge *sk);
+int	delay_start(t_own_knowledge *ok);
+int	increment_n_meals(t_own_knowledge *ok);
+int	get_n_meals(t_own_knowledge *ok);
 
 #endif

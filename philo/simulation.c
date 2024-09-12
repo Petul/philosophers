@@ -6,16 +6,79 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:46:26 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/09 13:01:29 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/12 14:31:53 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 #include <pthread.h>
+#include <stdio.h>
+
+static int	stop_simulation(t_own_knowledge *ok)
+{
+	if (pthread_mutex_lock(&ok->sk->sim_running_mtx) != 0)
+		return (-1);
+	ok->sk->sim_running = 0;
+	if (pthread_mutex_unlock(&ok->sk->sim_running_mtx) != 0)
+		return (-1);
+	return (0);
+}
+
+static int	watch_philosophers(t_table *t, t_own_knowledge *ok)
+{
+	int		i;
+	size_t	time;
+	size_t	t_last_meal;
+	int		all_eaten;
+	int		n_meals;
+
+	if (delay_start(ok) < 0)
+		return (-1);
+	while (1)
+	{
+		all_eaten = 1;
+		i = 0;
+		while (i < t->n_philos)
+		{
+			if (pthread_mutex_lock(&ok[i].mtx_last_meal) != 0)
+				return (-1);
+			t_last_meal = ok[i].t_last_meal;
+			if (pthread_mutex_unlock(&ok[i].mtx_last_meal) != 0)
+				return (-1);
+			time = get_milliseconds();
+			if (time < 0)
+				return (-1);
+			if	(time > t_last_meal && time - t_last_meal >= ok->sk->t_die)
+			{
+				if (stop_simulation(&ok[i]) < 0)
+					return (-1);
+				if (print_died(ok, i, (t_last_meal + ok->sk->t_die) - ok->sk->t_sim_start) < 0)
+					return (-1);
+				return (0);
+			}
+			if (t->n_eat >= 0)
+			{
+				n_meals = get_n_meals(ok);
+				if (n_meals < 0)
+					return (-1);
+				if (n_meals < t->n_eat)
+					all_eaten = 0;
+			}
+			i++;
+		}
+		if (t->n_eat >= 0 && all_eaten)
+		{
+			if (stop_simulation(ok) < 0)
+				return (-1);
+			return (0);
+		}
+	}
+}
 
 int	run_simulation(t_table *table, t_own_knowledge *ok)
 {
 	int		i;
+	int		*ret;
 	ssize_t	sim_start;
 
 	sim_start = get_milliseconds();
@@ -26,15 +89,16 @@ int	run_simulation(t_table *table, t_own_knowledge *ok)
 	i = 0;
 	while (i < table->n_philos)
 	{
-		ok[i].t_cs_start = ok->sk->t_sim_start;
 		ok[i].t_last_meal = ok->sk->t_sim_start;
 		pthread_create(&table->th_philos[i], NULL, &philosopher, &ok[i]); // Handle failure
 		i++;
 	}
 	i = 0;
+	if (watch_philosophers(table, ok) < 0)
+		return (-1);
 	while (i < table->n_philos)
 	{
-		pthread_join(table->th_philos[i], NULL); 
+		pthread_join(table->th_philos[i], (void **)&ret); 
 		i++;
 	}
 	return (0);

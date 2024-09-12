@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:07:39 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/09 13:09:49 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/12 14:30:19 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	if (ft_atoi(argv[2]) < 0 || ft_atoi(argv[3]) < 0 || ft_atoi(argv[4]) < 0)
 		return (-1);
 	s->t_die = (size_t)ft_atoi(argv[2]);
-	s->t_eat = (size_t)ft_atoi(argv[3]) * 1000;
-	s->t_sleep = (size_t)ft_atoi(argv[4]) * 1000;
+	s->t_eat = (size_t)ft_atoi(argv[3]);
+	s->t_sleep = (size_t)ft_atoi(argv[4]);
 	if (argc == 6)
 	{
 		s->n_eat = ft_atoi(argv[5]);
@@ -37,15 +37,6 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	return (0);
 }
 
-
-// static	int	watch_philosophers(t_philosopher_memory *m, int n_philos)
-// {
-// 	int	i;
-//
-// 	i = 0;
-//
-// }
-
 t_table	*prepare_table(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_philos)
 {
 	t_table	*table;
@@ -56,6 +47,7 @@ t_table	*prepare_table(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_
 	table->n_philos = s->n_philos;
 	table->th_philos = th_philos;
 	table->mtx_forks = mtx_forks;
+	table->n_eat = s->n_eat;
 	return (table);
 }
 
@@ -86,8 +78,10 @@ static t_own_knowledge	*prepare_philos(t_settings *s, t_shared_knowledge *sk, t_
 		else
 			ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
 		ok[i].sk = sk;
+		ok[i].n_meals = 0;
 		pthread_mutex_init(&ok[i].mtx_last_meal, NULL); // Handle failure
 		pthread_mutex_init(&ok[i].mtx_state, NULL); // Handle failure
+		pthread_mutex_init(&ok[i].mtx_n_meals, NULL); // Handle failure
 		i++;
 	}
 	return (ok);
@@ -99,6 +93,7 @@ static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th
 	t_table				*table;
 	t_own_knowledge		*ok;
 	t_shared_knowledge	*sk;
+	int					retval;
 
 	table = prepare_table(s, mtx_forks, th_philos);
 	if (!table)
@@ -116,7 +111,11 @@ static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th
 		free(table);
 		return (1);
 	}
-	return (run_simulation(table, ok));
+	retval = run_simulation(table, ok);
+	destroy_shared_knowledge(sk);
+	free(table);
+	free(ok);
+	return (retval);
 }
 
 int	main(int argc, char **argv)

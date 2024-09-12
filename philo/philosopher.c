@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 11:07:07 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/10 10:00:32 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/12 14:11:13 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,6 @@
 #include <sys/time.h>
 #include "philosophers.h"
 
-static int	delay_start(t_own_knowledge *ok)
-{
-	ssize_t	t;
-
-	t = get_milliseconds();
-	if (t < 0)
-		return (-1);
-	while ((size_t)t < ok->sk->t_sim_start)
-	{
-		t = get_milliseconds();
-		if (t < 0)
-			return (-1);
-	}
-	return (1);
-}
 
 // static void *error_exit(void)
 // {
@@ -70,6 +55,7 @@ int	acquire_forks(t_own_knowledge *ok)
 			if (philo_print(ok, "%04zu %d has taken a fork\n",  ok->id) < 0)
 				return (-1);
 			set_state(ok, EATING);
+			increment_n_meals(ok);
 			pthread_mutex_unlock(&ok->sk->take_forks_mtx);
 			return (0);
 		}
@@ -86,26 +72,40 @@ void	release_forks(t_own_knowledge *ok)
 void	*philosopher(void *own_knowledge)
 {
 	t_own_knowledge			*ok;
+	int						res;
 
 	ok = (t_own_knowledge *)own_knowledge;
 	if (delay_start(ok) < 0)
 		return (NULL);
 	while (1)
 	{
+		res = is_sim_running(ok->sk);
+		if (res == 0)
+			break ;
+		if (res == -1)
+			break ; //set early exit flag
 		set_state(ok, THINKING);
 		if (philo_print(ok, "%04zu %d is thinking\n", ok->id) < 0)
-			return (NULL); //set error flag?
-		usleep(500);
+			break ; //set error flag?
 		if (acquire_forks(ok) < 0)
-			return (NULL);
-		if (philo_print(ok, "%04zu %d is eating\n", ok->id) < 0)
-			return (NULL);
-		usleep(ok->sk->t_eat);
+			break ;
+		if (print_eat(ok) < 0)
+			break ;
+		res = wait_or_exit(ok->sk, ok->sk->t_eat);
+		if (res < 0)
+			break ; // Set early exit error flag
+		if (res > 1)
+			break ;
 		release_forks(ok);
 		set_state(ok, SLEEPING);
 		if (philo_print(ok, "%04zu %d is sleeping\n", ok->id) < 0)
-			return (NULL);
-		usleep(ok->sk->t_sleep);
+			break ;
+		res = wait_or_exit(ok->sk, ok->sk->t_sleep);
+		if (res < 0)
+			break ; // Set early exit error flag
+		if (res > 1)
+			break ;
 	}
-	pthread_exit(0);
+	int id = ok->id;
+	return (&id);
 }
