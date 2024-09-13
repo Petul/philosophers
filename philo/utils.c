@@ -38,15 +38,15 @@ ssize_t	get_milliseconds(void)
  */
 int	wait_or_exit(t_shared_knowledge *sk, size_t	msec)
 {
-	size_t	t0;
-	size_t	t;
+	ssize_t	t0;
+	ssize_t	t;
 	int		res;
 
 	t0 = get_milliseconds();
 	if (t0 < 0)
 		return (-1);
 	t = t0;
-	while (t - t0 < msec)
+	while ((size_t)(t - t0) < msec)
 	{
 		usleep(500);
 		res = is_sim_running(sk);

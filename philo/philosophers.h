@@ -14,6 +14,7 @@ typedef enum e_state
 	THINKING = 1,
 	EATING,
 	SLEEPING,
+	EXITED,
 } t_state;
 
 typedef struct s_settings
@@ -78,5 +79,11 @@ int	is_sim_running(t_shared_knowledge *sk);
 int	delay_start(t_own_knowledge *ok);
 int	increment_n_meals(t_own_knowledge *ok);
 int	get_n_meals(t_own_knowledge *ok);
+t_state	get_state(t_own_knowledge *ok);
+int	set_state(t_own_knowledge *ok, t_state state);
+int	acquire_forks(t_own_knowledge *ok);
+int	release_forks(t_own_knowledge *ok);
+ssize_t	get_last_meal(t_own_knowledge *ok);
+ssize_t	set_last_meal(t_own_knowledge *ok);
 
 #endif

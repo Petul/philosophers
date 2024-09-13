@@ -6,7 +6,7 @@
 #    By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/04 14:53:17 by pleander          #+#    #+#              #
-#    Updated: 2024/09/12 14:12:38 by pleander         ###   ########.fr        #
+#    Updated: 2024/09/13 09:30:55 by pleander         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,11 +16,13 @@ CC := cc
 CFLAGS := -Wall -Wextra -g
 CFILES := forks.c \
 		  ft_atoi.c \
+		  last_meal.c \
 		  main.c \
 		  n_meals.c \
 		  philosopher.c \
 		  print.c \
 		  shared_knowledge.c \
+		  state.c \
 		  simulation.c \
 		  utils.c
 

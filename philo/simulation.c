@@ -6,13 +6,12 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:46:26 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/12 14:31:53 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 10:20:39 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 #include <pthread.h>
-#include <stdio.h>
 
 static int	stop_simulation(t_own_knowledge *ok)
 {
@@ -27,8 +26,8 @@ static int	stop_simulation(t_own_knowledge *ok)
 static int	watch_philosophers(t_table *t, t_own_knowledge *ok)
 {
 	int		i;
-	size_t	time;
-	size_t	t_last_meal;
+	ssize_t	time;
+	ssize_t	t_last_meal;
 	int		all_eaten;
 	int		n_meals;
 
@@ -40,15 +39,18 @@ static int	watch_philosophers(t_table *t, t_own_knowledge *ok)
 		i = 0;
 		while (i < t->n_philos)
 		{
-			if (pthread_mutex_lock(&ok[i].mtx_last_meal) != 0)
-				return (-1);
-			t_last_meal = ok[i].t_last_meal;
-			if (pthread_mutex_unlock(&ok[i].mtx_last_meal) != 0)
+			if (get_state(&ok[i]) == EXITED)
+			{
+				stop_simulation(&ok[i]);
+				return (0);
+			}
+			t_last_meal = get_last_meal(&ok[i]);
+			if (t_last_meal < 0)
 				return (-1);
 			time = get_milliseconds();
 			if (time < 0)
 				return (-1);
-			if	(time > t_last_meal && time - t_last_meal >= ok->sk->t_die)
+			if	(time > t_last_meal && (size_t)(time - t_last_meal) >= ok->sk->t_die)
 			{
 				if (stop_simulation(&ok[i]) < 0)
 					return (-1);
@@ -78,7 +80,6 @@ static int	watch_philosophers(t_table *t, t_own_knowledge *ok)
 int	run_simulation(t_table *table, t_own_knowledge *ok)
 {
 	int		i;
-	int		*ret;
 	ssize_t	sim_start;
 
 	sim_start = get_milliseconds();
@@ -98,7 +99,7 @@ int	run_simulation(t_table *table, t_own_knowledge *ok)
 		return (-1);
 	while (i < table->n_philos)
 	{
-		pthread_join(table->th_philos[i], (void **)&ret); 
+		pthread_join(table->th_philos[i], NULL); 
 		i++;
 	}
 	return (0);
