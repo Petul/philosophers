@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 11:07:07 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 13:12:35 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 14:45:05 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,20 @@ void	*philosopher(void *own_knowledge)
 		return (NULL);
 	while (1)
 	{
-		if (is_sim_running(ok->sk) != 1)
+		if (is_sim_running(ok->table) != 1)
 			return (set_exit_and_return(ok));
 		if (set_state(ok, THINKING) < 0)
 			return (set_exit_and_return(ok));
 		usleep(500);
 		if (acquire_forks(ok) < 0)
 			return (set_exit_and_return(ok));
-		if (wait_or_exit(ok->sk, ok->sk->t_eat) != 0)
+		if (wait_or_exit(ok->table, ok->table->t_eat) != 0)
 			return (set_exit_and_return(ok));
 		if (release_forks(ok) < 0)
 			return (set_exit_and_return(ok));
 		if (set_state(ok, SLEEPING) < 0)
 			return (set_exit_and_return(ok));
-		if (wait_or_exit(ok->sk, ok->sk->t_sleep) != 0)
+		if (wait_or_exit(ok->table, ok->table->t_sleep) != 0)
 			return (set_exit_and_return(ok));
 	}
 	return (&ok->id);

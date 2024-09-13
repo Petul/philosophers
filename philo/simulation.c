@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:46:26 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 13:48:55 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 14:43:01 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 static int	stop_simulation(t_own_knowledge *ok)
 {
-	if (pthread_mutex_lock(&ok->sk->sim_running_mtx) != 0)
+	if (pthread_mutex_lock(&ok->table->sim_running_mtx) != 0)
 		return (-1);
-	ok->sk->sim_running = 0;
-	if (pthread_mutex_unlock(&ok->sk->sim_running_mtx) != 0)
+	ok->table->sim_running = 0;
+	if (pthread_mutex_unlock(&ok->table->sim_running_mtx) != 0)
 		return (-1);
 	return (0);
 }
@@ -49,11 +49,11 @@ static	int check_death(t_own_knowledge *ok)
 	time = get_milliseconds();
 	if (t_last_meal < 0 || time < 0)
 		return (-1);
-	if	(time > t_last_meal && (size_t)(time - t_last_meal) >= ok->sk->t_die)
+	if	(time > t_last_meal && (size_t)(time - t_last_meal) >= ok->table->t_die)
 	{
 		if (stop_simulation(ok) < 0)
 			return (-1);
-		if (print_died(ok, ok->id, (t_last_meal + ok->sk->t_die) - ok->sk->t_sim_start) < 0)
+		if (print_died(ok, ok->id, (t_last_meal + ok->table->t_die) - ok->table->t_sim_start) < 0)
 			return (-1);
 		return (0);
 	}
@@ -96,12 +96,12 @@ int	run_simulation(t_table *table, t_own_knowledge *ok)
 	sim_start = get_milliseconds();
 	if (sim_start < 0)
 		return (-1);
-	ok->sk->t_sim_start = sim_start;
-	ok->sk->t_sim_start += START_DELAY;
+	ok->table->t_sim_start = sim_start;
+	ok->table->t_sim_start += START_DELAY;
 	i = 0;
 	while (i < table->n_philos)
 	{
-		ok[i].t_last_meal = ok->sk->t_sim_start;
+		ok[i].t_last_meal = ok->table->t_sim_start;
 		pthread_create(&table->th_philos[i], NULL, &philosopher, &ok[i]); // Handle failure
 		i++;
 	}

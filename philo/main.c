@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:07:39 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 09:18:31 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 14:41:42 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,22 @@
 
 static int	parse_args(int argc, char **argv, t_settings *s)
 {
+	if (argc < 5 || argc > 6)
+		return(-1);
 	s->n_philos = ft_atoi(argv[1]);
 	if (s->n_philos < 1)
 		return (-1);
 	if (ft_atoi(argv[2]) < 0 || ft_atoi(argv[3]) < 0 || ft_atoi(argv[4]) < 0)
+		return (-1);
+	if (!is_number(argv[2]) || !is_number(argv[3]) || !is_number(argv[4]))
 		return (-1);
 	s->t_die = (size_t)ft_atoi(argv[2]);
 	s->t_eat = (size_t)ft_atoi(argv[3]);
 	s->t_sleep = (size_t)ft_atoi(argv[4]);
 	if (argc == 6)
 	{
+		if (!is_number(argv[5]))
+			return (-1);
 		s->n_eat = ft_atoi(argv[5]);
 		if (s->n_eat < 0)
 			return (-1);
@@ -37,21 +43,8 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	return (0);
 }
 
-t_table	*prepare_table(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_philos)
-{
-	t_table	*table;
 
-	table = malloc(sizeof(t_table));
-	if (!table)
-		return (NULL);
-	table->n_philos = s->n_philos;
-	table->th_philos = th_philos;
-	table->mtx_forks = mtx_forks;
-	table->n_eat = s->n_eat;
-	return (table);
-}
-
-static t_own_knowledge	*prepare_philos(t_settings *s, t_shared_knowledge *sk, t_table *table)
+static t_own_knowledge	*prepare_philos(t_settings *s, t_table *table)
 {
 	t_own_knowledge	*ok;
 	int	i;
@@ -77,7 +70,7 @@ static t_own_knowledge	*prepare_philos(t_settings *s, t_shared_knowledge *sk, t_
 			ok[i].mtx_fork2 = &table->mtx_forks[0];
 		else
 			ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
-		ok[i].sk = sk;
+		ok[i].table = table;
 		ok[i].n_meals = 0;
 		pthread_mutex_init(&ok[i].mtx_last_meal, NULL); // Handle failure
 		pthread_mutex_init(&ok[i].mtx_state, NULL); // Handle failure
@@ -90,30 +83,16 @@ static t_own_knowledge	*prepare_philos(t_settings *s, t_shared_knowledge *sk, t_
 
 static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_philos)
 {
-	t_table				*table;
+	t_table				table;
 	t_own_knowledge		*ok;
-	t_shared_knowledge	*sk;
 	int					retval;
 
-	table = prepare_table(s, mtx_forks, th_philos);
-	if (!table)
-		return (-1);
-	sk = create_shared_knowledge(s);
-	if (!sk)
-	{
-		free(table);
+	if (prepare_table(&table, s, mtx_forks, th_philos) < 0)
 		return (1);
-	}
-	ok = prepare_philos(s, sk, table);
+	ok = prepare_philos(s, &table);
 	if (!ok)
-	{
-		destroy_shared_knowledge(sk);
-		free(table);
 		return (1);
-	}
-	retval = run_simulation(table, ok);
-	destroy_shared_knowledge(sk);
-	free(table);
+	retval = run_simulation(&table, ok);
 	free(ok);
 	return (retval);
 }
@@ -125,13 +104,11 @@ int	main(int argc, char **argv)
 	t_settings		s;
 	int				retval;
 
-	if (argc < 5 || argc > 6)
-	{
-		printf("Error: incorrect number or arguments\n");
-		return(1);
-	}
 	if (parse_args(argc, argv, &s) < 0)
+	{
 		printf("Error: incorrect argument(s)\n");
+		return (1);
+	}
 	mtx_forks = create_forks(s.n_philos);
 	if (!mtx_forks)
 		return (1);
@@ -141,12 +118,8 @@ int	main(int argc, char **argv)
 		free(mtx_forks);
 		return (1);
 	}
-	retval = 0;
-	if (philosophers(&s, mtx_forks, th_philos) < 0)
-		retval = 1;
+	retval = philosophers(&s, mtx_forks, th_philos);
 	destroy_forks(mtx_forks, s.n_philos);
 	free(th_philos);
 	return (retval);
 }
-
-

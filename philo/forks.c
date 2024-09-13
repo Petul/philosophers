@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 12:37:12 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 09:08:31 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 14:45:19 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	acquire_forks(t_own_knowledge *ok)
 {
 	while (1)
 	{
-		pthread_mutex_lock(&ok->sk->take_forks_mtx);
+		pthread_mutex_lock(&ok->table->take_forks_mtx);
 		if (get_state(ok->left_philo) != EATING
 			&& get_state(ok->right_philo) != EATING)
 		{
@@ -65,10 +65,10 @@ int	acquire_forks(t_own_knowledge *ok)
 				return (-1);
 			set_state(ok, EATING);
 			increment_n_meals(ok);
-			pthread_mutex_unlock(&ok->sk->take_forks_mtx);
+			pthread_mutex_unlock(&ok->table->take_forks_mtx);
 			return (0);
 		}
-		pthread_mutex_unlock(&ok->sk->take_forks_mtx);
+		pthread_mutex_unlock(&ok->table->take_forks_mtx);
 	}
 }
 

@@ -6,7 +6,7 @@
 #    By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/04 14:53:17 by pleander          #+#    #+#              #
-#    Updated: 2024/09/13 09:30:55 by pleander         ###   ########.fr        #
+#    Updated: 2024/09/13 14:35:25 by pleander         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,9 +21,9 @@ CFILES := forks.c \
 		  n_meals.c \
 		  philosopher.c \
 		  print.c \
-		  shared_knowledge.c \
 		  state.c \
 		  simulation.c \
+		  table.c \
 		  utils.c
 
 OBJECTS := $(CFILES:.c=.o)

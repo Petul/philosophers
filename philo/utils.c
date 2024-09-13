@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 11:28:45 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/06 11:38:35 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 14:44:40 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ ssize_t	get_milliseconds(void)
  * @param usec 
  * @return -1: Error, 0: Wait finished, 1: Simulation has ended
  */
-int	wait_or_exit(t_shared_knowledge *sk, size_t	msec)
+int	wait_or_exit(t_table *table, size_t	msec)
 {
 	ssize_t	t0;
 	ssize_t	t;
@@ -49,7 +49,7 @@ int	wait_or_exit(t_shared_knowledge *sk, size_t	msec)
 	while ((size_t)(t - t0) < msec)
 	{
 		usleep(500);
-		res = is_sim_running(sk);
+		res = is_sim_running(table);
 		if (res == 0)
 			return (1);
 		if (res == -1)
@@ -61,17 +61,17 @@ int	wait_or_exit(t_shared_knowledge *sk, size_t	msec)
 	return (0);
 }
 
-int	is_sim_running(t_shared_knowledge *sk)
+int	is_sim_running(t_table *table)
 {
-	if (pthread_mutex_lock(&sk->sim_running_mtx) != 0)
+	if (pthread_mutex_lock(&table->sim_running_mtx) != 0)
 		return (-1);
-	if (sk->sim_running == 0)
+	if (table->sim_running == 0)
 	{
-		if (pthread_mutex_unlock(&sk->sim_running_mtx) != 0)
+		if (pthread_mutex_unlock(&table->sim_running_mtx) != 0)
 			return (-1);
 		return (0);
 	}
-	if (pthread_mutex_unlock(&sk->sim_running_mtx) != 0)
+	if (pthread_mutex_unlock(&table->sim_running_mtx) != 0)
 		return (-1);
 	return (1);
 }
@@ -83,11 +83,22 @@ int	delay_start(t_own_knowledge *ok)
 	t = get_milliseconds();
 	if (t < 0)
 		return (-1);
-	while ((size_t)t < ok->sk->t_sim_start)
+	while ((size_t)t < ok->table->t_sim_start)
 	{
 		t = get_milliseconds();
 		if (t < 0)
 			return (-1);
+	}
+	return (1);
+}
+
+int	is_number(char	*str)
+{
+	while (*str)
+	{
+		if (!(*str >= '0' && *str <= '9'))
+			return (0);
+		str++;
 	}
 	return (1);
 }
