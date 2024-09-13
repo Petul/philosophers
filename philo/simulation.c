@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:46:26 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 10:20:39 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 13:48:55 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,52 +23,63 @@ static int	stop_simulation(t_own_knowledge *ok)
 	return (0);
 }
 
-static int	watch_philosophers(t_table *t, t_own_knowledge *ok)
+static	int	check_meals(t_own_knowledge *ok, t_table *t, int *n_ate_enough)
 {
-	int		i;
-	ssize_t	time;
-	ssize_t	t_last_meal;
-	int		all_eaten;
 	int		n_meals;
 
-	if (delay_start(ok) < 0)
+	n_meals = get_n_meals(ok);
+	if (n_meals < 0)
 		return (-1);
+	if (n_meals >= t->n_eat)
+		(*n_ate_enough)++;
+	return (0);
+}
+
+static	int check_death(t_own_knowledge *ok)
+{
+	ssize_t	time;
+	ssize_t	t_last_meal;
+
+	if (get_state(ok) == EXITED)
+	{
+		stop_simulation(ok);
+		return (0);
+	}
+	t_last_meal = get_last_meal(ok);
+	time = get_milliseconds();
+	if (t_last_meal < 0 || time < 0)
+		return (-1);
+	if	(time > t_last_meal && (size_t)(time - t_last_meal) >= ok->sk->t_die)
+	{
+		if (stop_simulation(ok) < 0)
+			return (-1);
+		if (print_died(ok, ok->id, (t_last_meal + ok->sk->t_die) - ok->sk->t_sim_start) < 0)
+			return (-1);
+		return (0);
+	}
+	return (1);
+}
+static	int	watch_philosophers(t_table *t, t_own_knowledge *ok)
+{
+	int		i;
+	int		n_ate_enough;
+	int		ret;
+
 	while (1)
 	{
-		all_eaten = 1;
+		n_ate_enough = 0;
 		i = 0;
 		while (i < t->n_philos)
 		{
-			if (get_state(&ok[i]) == EXITED)
-			{
-				stop_simulation(&ok[i]);
-				return (0);
-			}
-			t_last_meal = get_last_meal(&ok[i]);
-			if (t_last_meal < 0)
-				return (-1);
-			time = get_milliseconds();
-			if (time < 0)
-				return (-1);
-			if	(time > t_last_meal && (size_t)(time - t_last_meal) >= ok->sk->t_die)
-			{
-				if (stop_simulation(&ok[i]) < 0)
-					return (-1);
-				if (print_died(ok, i, (t_last_meal + ok->sk->t_die) - ok->sk->t_sim_start) < 0)
-					return (-1);
-				return (0);
-			}
+			ret = check_death(&ok[i]);
+			if (ret != 1)
+				return (ret);
 			if (t->n_eat >= 0)
-			{
-				n_meals = get_n_meals(ok);
-				if (n_meals < 0)
+				if (check_meals(ok, t, &n_ate_enough) < 0)
 					return (-1);
-				if (n_meals < t->n_eat)
-					all_eaten = 0;
-			}
 			i++;
 		}
-		if (t->n_eat >= 0 && all_eaten)
+		if (n_ate_enough == t->n_philos)
 		{
 			if (stop_simulation(ok) < 0)
 				return (-1);

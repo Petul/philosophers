@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:24:20 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 09:40:10 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 13:49:08 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,7 @@ int	print_eat(t_own_knowledge *ok)
 		return (-1);
 	t_last_meal = set_last_meal(ok);
 	if (t_last_meal < 0)
-	{
-		printf("t_last meal smaller than one for %d\n", ok->id);
 		return (-1);
-	}
 	if (is_sim_running(ok->sk))
 	{
 		if (printf("%04zu %d is eating\n", t_last_meal - ok->sk->t_sim_start, ok->id) < 0)
