@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:07:39 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 14:41:42 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 15:03:29 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 static int	parse_args(int argc, char **argv, t_settings *s)
 {
 	if (argc < 5 || argc > 6)
-		return(-1);
+		return (-1);
 	s->n_philos = ft_atoi(argv[1]);
 	if (s->n_philos < 1)
 		return (-1);
@@ -43,11 +43,33 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	return (0);
 }
 
+static void	hand_out_utensils(t_own_knowledge *ok, t_table *table, int i)
+{
+	ok[i].mtx_fork1 = &table->mtx_forks[i];
+	if (i == 0)
+	{
+		ok[i].left_philo = &ok[table->n_philos - 1];
+		ok[i].right_philo = &ok[i + 1];
+		ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
+	}
+	else if (i == table->n_philos - 1)
+	{
+		ok[i].left_philo = &ok[table->n_philos - 1];
+		ok[i].right_philo = &ok[0];
+		ok[i].mtx_fork2 = &table->mtx_forks[0];
+	}
+	else
+	{
+		ok[i].left_philo = &ok[i - 1];
+		ok[i].right_philo = &ok[i + 1];
+		ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
+	}
+}
 
 static t_own_knowledge	*prepare_philos(t_settings *s, t_table *table)
 {
+	int				i;
 	t_own_knowledge	*ok;
-	int	i;
 
 	ok = calloc(s->n_philos, sizeof(t_own_knowledge));
 	if (!ok)
@@ -57,31 +79,22 @@ static t_own_knowledge	*prepare_philos(t_settings *s, t_table *table)
 	{
 		ok[i].id = i;
 		ok[i].cs = THINKING;
-		ok[i].mtx_fork1 = &table->mtx_forks[i];
-		if (i == 0)
-			ok[i].left_philo = &ok[s->n_philos - 1];
-		else
-			ok[i].left_philo = &ok[i - 1];
-		if (i == s->n_philos - 1)
-			ok[i].right_philo = &ok[0];
-		else
-			ok[i].right_philo = &ok[i + 1];
-		if (i + 1 >= s->n_philos)
-			ok[i].mtx_fork2 = &table->mtx_forks[0];
-		else
-			ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
 		ok[i].table = table;
+		hand_out_utensils(ok, table, i);
 		ok[i].n_meals = 0;
-		pthread_mutex_init(&ok[i].mtx_last_meal, NULL); // Handle failure
-		pthread_mutex_init(&ok[i].mtx_state, NULL); // Handle failure
-		pthread_mutex_init(&ok[i].mtx_n_meals, NULL); // Handle failure
+		if (pthread_mutex_init(&ok[i].mtx_last_meal, NULL) < 0)
+			return (NULL);
+		if (pthread_mutex_init(&ok[i].mtx_state, NULL) < 0)
+			return (NULL);
+		if (pthread_mutex_init(&ok[i].mtx_n_meals, NULL) < 0)
+			return (NULL);
 		i++;
 	}
 	return (ok);
 }
 
-
-static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_philos)
+static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks,
+						pthread_t *th_philos)
 {
 	t_table				table;
 	t_own_knowledge		*ok;

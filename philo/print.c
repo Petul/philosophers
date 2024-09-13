@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:24:20 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 14:45:50 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 15:13:09 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ int	print_eat(t_own_knowledge *ok)
 		return (-1);
 	if (is_sim_running(ok->table))
 	{
-		if (printf("%04zu %d is eating\n", t_last_meal - ok->table->t_sim_start, ok->id) < 0)
+		if (printf("%04zu %d is eating\n", t_last_meal - ok->table->t_sim_start,
+				ok->id) < 0)
 			return (-1);
 	}
 	if (pthread_mutex_unlock(&ok->table->print_mtx) < 0)

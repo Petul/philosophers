@@ -62,7 +62,7 @@ typedef struct s_own_knowledge
 int	ft_atoi(const char *str);
 pthread_mutex_t	*create_forks(int n_forks);
 void	destroy_forks(pthread_mutex_t *forks, int n_forks);
-void		*philosopher(void *philosopher);
+void		*philo(void *philosopher);
 ssize_t		get_milliseconds(void);
 int	run_simulation(t_table *table, t_own_knowledge *ok);
 int	philo_print(t_own_knowledge *ok, char *fstr, int id);

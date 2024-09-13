@@ -6,10 +6,9 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 11:28:45 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 14:44:40 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 15:03:48 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "philosophers.h"
 #include <sys/types.h>

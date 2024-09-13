@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:33:57 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 14:46:05 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 15:04:10 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 #include <stdlib.h>
 #include "philosophers.h"
 
-int	prepare_table(t_table *table, t_settings *s, pthread_mutex_t *mtx_forks, pthread_t *th_philos)
+int	prepare_table(t_table *table, t_settings *s, pthread_mutex_t *mtx_forks,
+					pthread_t *th_philos)
 {
 	table->n_philos = s->n_philos;
 	table->th_philos = th_philos;

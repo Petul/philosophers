@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 11:07:07 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 14:45:05 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/13 15:11:32 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	*set_exit_and_return(t_own_knowledge *ok)
 	return (NULL);
 }
 
-void	*philosopher(void *own_knowledge)
+void	*philo(void *own_knowledge)
 {
 	t_own_knowledge			*ok;
 
