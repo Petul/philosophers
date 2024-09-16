@@ -17,7 +17,7 @@
 #include <sys/time.h>
 #include <stdio.h> //
 
-ssize_t	get_milliseconds(void)
+size_t	get_milliseconds(void)
 {
 	struct timeval	tv;
 	size_t			millis;
@@ -37,15 +37,13 @@ ssize_t	get_milliseconds(void)
  */
 int	wait_or_exit(t_table *table, size_t	msec)
 {
-	ssize_t	t0;
-	ssize_t	t;
+	size_t	t0;
+	size_t	t;
 	int		res;
 
 	t0 = get_milliseconds();
-	if (t0 < 0)
-		return (-1);
 	t = t0;
-	while ((size_t)(t - t0) < msec)
+	while ((t - t0) < msec)
 	{
 		usleep(500);
 		res = is_sim_running(table);
@@ -54,40 +52,29 @@ int	wait_or_exit(t_table *table, size_t	msec)
 		if (res == -1)
 			return (-1);
 		t = get_milliseconds();
-		if (t < 0)
-			return (-1);
 	}
 	return (0);
 }
 
 int	is_sim_running(t_table *table)
 {
-	if (pthread_mutex_lock(&table->sim_running_mtx) != 0)
-		return (-1);
+	pthread_mutex_lock(&table->sim_running_mtx);
 	if (table->sim_running == 0)
 	{
-		if (pthread_mutex_unlock(&table->sim_running_mtx) != 0)
-			return (-1);
+		pthread_mutex_unlock(&table->sim_running_mtx);
 		return (0);
 	}
-	if (pthread_mutex_unlock(&table->sim_running_mtx) != 0)
-		return (-1);
+	pthread_mutex_unlock(&table->sim_running_mtx);
 	return (1);
 }
 
 int	delay_start(t_own_knowledge *ok)
 {
-	ssize_t	t;
+	size_t	t;
 
 	t = get_milliseconds();
-	if (t < 0)
-		return (-1);
-	while ((size_t)t < ok->table->t_sim_start)
-	{
+	while (t < ok->table->t_sim_start)
 		t = get_milliseconds();
-		if (t < 0)
-			return (-1);
-	}
 	return (1);
 }
 

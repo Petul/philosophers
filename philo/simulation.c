@@ -15,11 +15,9 @@
 
 static int	stop_simulation(t_own_knowledge *ok)
 {
-	if (pthread_mutex_lock(&ok->table->sim_running_mtx) != 0)
-		return (-1);
+	pthread_mutex_lock(&ok->table->sim_running_mtx);
 	ok->table->sim_running = 0;
-	if (pthread_mutex_unlock(&ok->table->sim_running_mtx) != 0)
-		return (-1);
+	pthread_mutex_unlock(&ok->table->sim_running_mtx);
 	return (0);
 }
 
@@ -28,8 +26,6 @@ static	int	check_meals(t_own_knowledge *ok, t_table *t, int *n_ate_enough)
 	int		n_meals;
 
 	n_meals = get_n_meals(ok);
-	if (n_meals < 0)
-		return (-1);
 	if (n_meals >= t->n_eat)
 		(*n_ate_enough)++;
 	return (0);
@@ -37,8 +33,8 @@ static	int	check_meals(t_own_knowledge *ok, t_table *t, int *n_ate_enough)
 
 static int	check_death(t_own_knowledge *ok)
 {
-	ssize_t	time;
-	ssize_t	t_last_meal;
+	size_t	time;
+	size_t	t_last_meal;
 
 	if (get_state(ok) == EXITED)
 	{
@@ -47,9 +43,7 @@ static int	check_death(t_own_knowledge *ok)
 	}
 	t_last_meal = get_last_meal(ok);
 	time = get_milliseconds();
-	if (t_last_meal < 0 || time < 0)
-		return (-1);
-	if (time > t_last_meal && (size_t)(time - t_last_meal) >= ok->table->t_die)
+	if (time > t_last_meal && (time - t_last_meal) >= ok->table->t_die)
 	{
 		stop_simulation(ok);
 		if (print_died(ok, ok->id, (t_last_meal + ok->table->t_die)
@@ -91,11 +85,9 @@ static	int	watch_philosophers(t_table *t, t_own_knowledge *ok)
 int	run_simulation(t_table *table, t_own_knowledge *ok)
 {
 	int		i;
-	ssize_t	sim_start;
+	size_t	sim_start;
 
 	sim_start = get_milliseconds();
-	if (sim_start < 0)
-		return (-1);
 	ok->table->t_sim_start = sim_start;
 	ok->table->t_sim_start += START_DELAY;
 	i = 0;

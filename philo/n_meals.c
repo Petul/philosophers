@@ -17,20 +17,15 @@ int	get_n_meals(t_own_knowledge *ok)
 {
 	int	n_meals;
 
-	if (pthread_mutex_lock(&ok->mtx_last_meal) < 0)
-		return (-1);
+	pthread_mutex_lock(&ok->mtx_last_meal);
 	n_meals = ok->n_meals;
-	if (pthread_mutex_unlock(&ok->mtx_last_meal) < 0)
-		return (-1);
+	pthread_mutex_unlock(&ok->mtx_last_meal);
 	return (n_meals);
 }
 
-int	increment_n_meals(t_own_knowledge *ok)
+void	increment_n_meals(t_own_knowledge *ok)
 {
-	if (pthread_mutex_lock(&ok->mtx_last_meal) < 0)
-		return (-1);
+	pthread_mutex_lock(&ok->mtx_last_meal);
 	ok->n_meals++;
-	if (pthread_mutex_unlock(&ok->mtx_last_meal) < 0)
-		return (-1);
-	return (0);
+	pthread_mutex_unlock(&ok->mtx_last_meal);
 }

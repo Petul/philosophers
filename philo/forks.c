@@ -71,11 +71,9 @@ int	acquire_forks(t_own_knowledge *ok)
 	}
 }
 
-int	release_forks(t_own_knowledge *ok)
+void	release_forks(t_own_knowledge *ok)
 {
-	if (pthread_mutex_unlock(ok->mtx_fork1) < 0)
-		return (-1);
-	if (pthread_mutex_unlock(ok->mtx_fork2) < 0)
-		return (-1);
-	return (0);
+	pthread_mutex_unlock(ok->mtx_fork1);
+	pthread_mutex_unlock(ok->mtx_fork2);
+	return ;
 }

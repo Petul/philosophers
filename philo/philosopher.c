@@ -41,8 +41,7 @@ void	*philo(void *own_knowledge)
 			return (set_exit_and_return(ok));
 		if (wait_or_exit(ok->table, ok->table->t_eat) != 0)
 			return (set_exit_and_return(ok));
-		if (release_forks(ok) < 0)
-			return (set_exit_and_return(ok));
+		release_forks(ok);
 		if (set_state(ok, SLEEPING) < 0)
 			return (set_exit_and_return(ok));
 		if (wait_or_exit(ok->table, ok->table->t_sleep) != 0)

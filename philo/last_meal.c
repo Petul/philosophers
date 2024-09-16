@@ -12,27 +12,19 @@
 
 #include "philosophers.h"
 
-ssize_t	get_last_meal(t_own_knowledge *ok)
+size_t	get_last_meal(t_own_knowledge *ok)
 {
-	ssize_t	t_last_meal;
+	size_t	t_last_meal;
 
-	if (pthread_mutex_lock(&ok->mtx_last_meal) != 0)
-		return (-1);
+	pthread_mutex_lock(&ok->mtx_last_meal);
 	t_last_meal = ok->t_last_meal;
-	if (pthread_mutex_unlock(&ok->mtx_last_meal) != 0)
-		return (-1);
+	pthread_mutex_unlock(&ok->mtx_last_meal);
 	return (t_last_meal);
 }
 
-ssize_t	set_last_meal(t_own_knowledge *ok)
+void	set_last_meal(t_own_knowledge *ok)
 {
-	ssize_t	t_last_meal;
-
-	if (pthread_mutex_lock(&ok->mtx_last_meal) < 0)
-		return (-1);
-	t_last_meal = get_milliseconds();
-	ok->t_last_meal = t_last_meal;
-	if (pthread_mutex_unlock(&ok->mtx_last_meal) < 0)
-		return (-1);
-	return (t_last_meal);
+	pthread_mutex_lock(&ok->mtx_last_meal);
+	ok->t_last_meal = get_milliseconds();
+	pthread_mutex_unlock(&ok->mtx_last_meal);
 }
