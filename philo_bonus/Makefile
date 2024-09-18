@@ -14,14 +14,9 @@ NAME := philosophers
 CC := cc
 #CFLAGS := -Wall -Wextra -Werror
 CFLAGS := -Wall -Wextra -g
-CFILES := forks.c \
-		  ft_atoi.c \
-		  last_meal.c \
+CFILES := ft_atoi.c \
 		  main.c \
-		  n_meals.c \
 		  philosopher.c \
-		  print.c \
-		  state.c \
 		  simulation.c \
 		  table.c \
 		  utils.c

@@ -43,69 +43,15 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	return (0);
 }
 
-static void	hand_out_utensils(t_own_knowledge *ok, t_table *table, int i)
-{
-	ok[i].mtx_fork1 = &table->mtx_forks[i];
-	if (i == 0)
-	{
-		ok[i].left_philo = &ok[table->n_philos - 1];
-		ok[i].right_philo = &ok[i + 1];
-		ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
-	}
-	else if (i == table->n_philos - 1)
-	{
-		ok[i].left_philo = &ok[table->n_philos - 1];
-		ok[i].right_philo = &ok[0];
-		ok[i].mtx_fork2 = &table->mtx_forks[0];
-	}
-	else
-	{
-		ok[i].left_philo = &ok[i - 1];
-		ok[i].right_philo = &ok[i + 1];
-		ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
-	}
-}
-
-static t_own_knowledge	*prepare_philos(t_settings *s, t_table *table)
-{
-	int				i;
-	t_own_knowledge	*ok;
-
-	ok = calloc(s->n_philos, sizeof(t_own_knowledge));
-	if (!ok)
-		return (NULL);
-	i = 0;
-	while (i < s->n_philos)
-	{
-		ok[i].id = i;
-		ok[i].cs = THINKING;
-		ok[i].table = table;
-		hand_out_utensils(ok, table, i);
-		ok[i].n_meals = 0;
-		if (pthread_mutex_init(&ok[i].mtx_last_meal, NULL) < 0)
-			return (NULL);
-		if (pthread_mutex_init(&ok[i].mtx_state, NULL) < 0)
-			return (NULL);
-		if (pthread_mutex_init(&ok[i].mtx_n_meals, NULL) < 0)
-			return (NULL);
-		i++;
-	}
-	return (ok);
-}
-
-static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks,
-						pthread_t *th_philos)
+static int	philosophers(t_settings *s, pthread_t *th_philos)
 {
 	t_table				table;
 	t_own_knowledge		*ok;
 	int					retval;
 
-	if (prepare_table(&table, s, mtx_forks, th_philos) < 0)
+	if (prepare_table(&table, s) < 0)
 		return (1);
-	ok = prepare_philos(s, &table);
-	if (!ok)
-		return (1);
-	retval = run_simulation(&table, ok);
+	retval = run_simulation(&table);
 	free(ok);
 	return (retval);
 }
@@ -113,7 +59,6 @@ static int	philosophers(t_settings *s, pthread_mutex_t *mtx_forks,
 int	main(int argc, char **argv)
 {
 	pthread_t		*th_philos;
-	pthread_mutex_t	*mtx_forks;
 	t_settings		s;
 	int				retval;
 
@@ -122,17 +67,10 @@ int	main(int argc, char **argv)
 		printf("Error: incorrect argument(s)\n");
 		return (1);
 	}
-	mtx_forks = create_forks(s.n_philos);
-	if (!mtx_forks)
-		return (1);
 	th_philos = malloc(sizeof(pthread_t) * s.n_philos);
 	if (!th_philos)
-	{
-		free(mtx_forks);
 		return (1);
-	}
-	retval = philosophers(&s, mtx_forks, th_philos);
-	destroy_forks(mtx_forks, s.n_philos);
+	retval = philosophers(&s, th_philos);
 	free(th_philos);
 	return (retval);
 }
