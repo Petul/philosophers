@@ -24,10 +24,16 @@ int	prepare_table(t_table *table, t_settings *s)
 	table->t_eat = s->t_eat;
 	table->t_sim_start = 0;
 	table->sem_forks = sem_open(SEM_FORKS, O_CREAT, 0644, s->n_philos);
-	if (table->sem_forks < 0)
+	if (table->sem_forks == SEM_FAILED)
 		return (-1);
 	table->sem_death = sem_open(SEM_DEATH, O_CREAT, 0644, 0);
-	if (table->sem_death < 0)
+	if (table->sem_death == SEM_FAILED)
+		return (-1);
+	table->sem_grab_forks = sem_open(SEM_GRAB_FORKS, O_CREAT, 0644, 1);
+	if (table->sem_death == SEM_FAILED)
+		return (-1);
+	table->sem_print = sem_open(SEM_PRINT, O_CREAT, 0644, 1);
+	if (table->sem_death == SEM_FAILED)
 		return (-1);
 	table->sem_eaten_enough = NULL; //TODO
 	return (0);

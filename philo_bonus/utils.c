@@ -6,11 +6,12 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 11:28:45 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 15:03:48 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:33:16 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#include <semaphore.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -47,4 +48,16 @@ int	is_number(char	*str)
 		str++;
 	}
 	return (1);
+}
+
+void	sleep_until(size_t tn)
+{
+	size_t	t;
+
+	t = get_milliseconds();
+	while (t < tn)
+	{
+		usleep(100);
+		t = get_milliseconds();
+	}
 }

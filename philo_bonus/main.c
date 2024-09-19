@@ -6,14 +6,13 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:07:39 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 15:03:29 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:22:54 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <sys/time.h>
 #include <pthread.h>
-#include <stdlib.h>
 #include "philosophers.h"
 
 static int	parse_args(int argc, char **argv, t_settings *s)
@@ -43,22 +42,31 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 	return (0);
 }
 
-static int	philosophers(t_settings *s, pthread_t *th_philos)
+static void	clear_semaphores(void)
+{
+	sem_unlink(SEM_FORKS);
+	sem_unlink(SEM_DEATH);
+	sem_unlink(SEM_GRAB_FORKS);
+	sem_unlink(SEM_PRINT);
+}
+
+static int	philosophers(t_settings *s)
 {
 	t_table				table;
-	t_own_knowledge		*ok;
 	int					retval;
 
 	if (prepare_table(&table, s) < 0)
 		return (1);
 	retval = run_simulation(&table);
-	free(ok);
+	sem_close(table.sem_print);
+	sem_close(table.sem_forks);
+	sem_close(table.sem_grab_forks);
+	sem_close(table.sem_death);
 	return (retval);
 }
 
 int	main(int argc, char **argv)
 {
-	pthread_t		*th_philos;
 	t_settings		s;
 	int				retval;
 
@@ -67,10 +75,7 @@ int	main(int argc, char **argv)
 		printf("Error: incorrect argument(s)\n");
 		return (1);
 	}
-	th_philos = malloc(sizeof(pthread_t) * s.n_philos);
-	if (!th_philos)
-		return (1);
-	retval = philosophers(&s, th_philos);
-	free(th_philos);
+	clear_semaphores();
+	retval = philosophers(&s);
 	return (retval);
 }

@@ -6,7 +6,7 @@
 #    By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/04 14:53:17 by pleander          #+#    #+#              #
-#    Updated: 2024/09/13 14:35:25 by pleander         ###   ########.fr        #
+#    Updated: 2024/09/19 14:52:36 by pleander         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,9 @@ CC := cc
 CFLAGS := -Wall -Wextra -g
 CFILES := ft_atoi.c \
 		  main.c \
+		  make_sem_name.c \
 		  philosopher.c \
+		  print.c \
 		  simulation.c \
 		  table.c \
 		  utils.c
