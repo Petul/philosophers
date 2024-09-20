@@ -29,7 +29,6 @@ static void	kill_philos(pid_t *children, int n)
 {
 	int i;
 
-	printf("Killing philos\n");
 	i = 0;
 	while (i < n)
 	{

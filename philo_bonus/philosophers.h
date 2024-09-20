@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:24:03 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/19 15:49:09 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/20 08:46:24 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,8 @@ int				rest_or_die(t_own_knowledge *ok, size_t	msec);
 size_t			pprint(t_own_knowledge *ok, char *fstr);
 char			*make_sem_name(char *basename, size_t id);
 void			sleep_until(size_t tn);
+void			think(t_own_knowledge *ok);
+void			eat(t_own_knowledge *ok);
+void			rest(t_own_knowledge *ok);
 
 #endif
