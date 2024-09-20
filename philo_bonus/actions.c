@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 08:45:23 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/20 08:50:12 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/20 13:43:22 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ void	eat(t_own_knowledge *ok)
 	sem_wait(ok->sem_last_meal);
 	ok->t_last_meal = pprint(ok, "%04zu %d is eating\n");
 	sem_post(ok->sem_last_meal);
+	ok->n_meals++;
+	if (ok->n_meals == ok->table->n_eat && ok->table->n_eat >= 0)
+		sem_post(ok->table->sem_eaten_enough);
 	sleep_until(ok->t_last_meal + ok->table->t_eat);
 	return_forks(ok);
 }

@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:07:39 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/19 15:22:54 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/20 13:47:57 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ static void	clear_semaphores(void)
 	sem_unlink(SEM_DEATH);
 	sem_unlink(SEM_GRAB_FORKS);
 	sem_unlink(SEM_PRINT);
+	sem_unlink(SEM_SIM_ENDED);
+	sem_unlink(SEM_EATEN_ENOUGH);
 }
 
 static int	philosophers(t_settings *s)
@@ -62,6 +64,7 @@ static int	philosophers(t_settings *s)
 	sem_close(table.sem_forks);
 	sem_close(table.sem_grab_forks);
 	sem_close(table.sem_death);
+	sem_close(table.sem_eaten_enough);
 	return (retval);
 }
 

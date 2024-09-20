@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:24:03 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/20 08:46:24 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/20 10:48:38 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # define SEM_DEATH "sem_death"
 # define SEM_GRAB_FORKS "sem_grab_forks"
 # define SEM_PRINT "sem_print"
+# define SEM_SIM_ENDED "sem_sim_print"
+# define SEM_EATEN_ENOUGH "sem_eaten_enough"
 
 typedef struct s_settings
 {
@@ -42,11 +44,13 @@ typedef struct s_table
 	size_t			t_die;
 	size_t			t_eat;
 	size_t			t_sim_start;
+	int				died;
+	int				eaten_enough;
 	sem_t			*sem_forks;
 	sem_t			*sem_death;
 	sem_t			*sem_grab_forks;
 	sem_t			*sem_print;
-	sem_t			**sem_eaten_enough;
+	sem_t			*sem_eaten_enough;
 }	t_table;
 
 typedef struct s_own_knowledge
@@ -55,7 +59,6 @@ typedef struct s_own_knowledge
 	ssize_t					t_last_meal;
 	int						n_meals;
 	sem_t					*sem_death;
-	sem_t					*sem_eaten_enough;
 	sem_t					*sem_last_meal;
 	t_table					*table;
 }	t_own_knowledge;

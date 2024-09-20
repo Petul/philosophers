@@ -6,13 +6,14 @@
 #    By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/04 14:53:17 by pleander          #+#    #+#              #
-#    Updated: 2024/09/20 08:52:58 by pleander         ###   ########.fr        #
+#    Updated: 2024/09/20 13:26:31 by pleander         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := philosophers
 CC := cc
-CFLAGS := -Wall -Wextra -Werror
+#CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra
 CFILES := actions.c \
 		  ft_atoi.c \
 		  main.c \

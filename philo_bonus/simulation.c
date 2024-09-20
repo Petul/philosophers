@@ -6,11 +6,11 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:46:26 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/19 15:28:14 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/20 13:47:44 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include <semaphore.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -50,11 +50,26 @@ static int	init_philo_semaphores(t_own_knowledge *ok)
 	return (0);
 }
 
+static void	meal_monitor(t_table *t)
+{
+	int i;
+
+	i = 0;
+	while (i < t->n_philos)
+	{
+		sem_wait(t->sem_eaten_enough);
+		i++;
+	}
+	sem_post(t->sem_death);
+	exit(0);
+}
+
 int	run_simulation(t_table *t)
 {
 	int				i;
 	t_own_knowledge	ok;
 	pid_t			*children;
+	pid_t			pid_meal_monitor;
 
 	children = malloc(sizeof(pid_t) * t->n_philos);
 	if (!children)
@@ -70,13 +85,23 @@ int	run_simulation(t_table *t)
 			return (-1); // Handle error
 		if (children[i] == 0)
 		{
+			free(children);
 			init_philo_semaphores(&ok);
 			philo(&ok);
 		}
 		i++;
 	}
+	pid_meal_monitor = fork();
+	if (pid_meal_monitor < 0)
+		return (-1);// HAndle error
+	if (pid_meal_monitor == 0)
+	{
+		free(children);
+		meal_monitor(t);
+	}
 	sem_wait(t->sem_death);
 	kill_philos(children, t->n_philos);
+	kill(pid_meal_monitor, SIGKILL);
 	free(children);
 	return (0);
 }
