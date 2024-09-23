@@ -37,7 +37,7 @@ int	prepare_table(t_table *table, t_settings *s)
 	table->sem_print = sem_open(SEM_PRINT, O_CREAT, 0644, 1);
 	if (table->sem_print == SEM_FAILED)
 		return (-1);
-	table->sem_eaten_enough = sem_open(SEM_EATEN_ENOUGH, O_CREAT, 0644, 1);
+	table->sem_eaten_enough = sem_open(SEM_EATEN_ENOUGH, O_CREAT, 0644, 0);
 	if (table->sem_eaten_enough == SEM_FAILED)
 		return (-1);
 	return (0);
