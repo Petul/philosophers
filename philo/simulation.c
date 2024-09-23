@@ -70,7 +70,7 @@ static	int	watch_philosophers(t_table *t, t_own_knowledge *ok)
 			if (ret != 1)
 				return (ret);
 			if (t->n_eat >= 0)
-				if (check_meals(ok, t, &n_ate_enough) < 0)
+				if (check_meals(&ok[i], t, &n_ate_enough) < 0)
 					return (-1);
 			i++;
 		}
