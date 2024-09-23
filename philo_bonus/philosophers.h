@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:24:03 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/23 11:25:46 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:38:12 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ void	sleep_until(size_t tn);
 void	think(t_own_knowledge *ok);
 void	eat(t_own_knowledge *ok);
 void	rest(t_own_knowledge *ok);
-void	*ft_memset(void *b, int c, size_t len);
 void	init_philo(t_own_knowledge *ok, t_table *t);
 void	kill_philos(pid_t *children);
 int		init_philo_semaphores(t_own_knowledge *ok);

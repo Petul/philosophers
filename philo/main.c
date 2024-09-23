@@ -71,7 +71,7 @@ static t_own_knowledge	*prepare_philos(t_settings *s, t_table *table)
 	int				i;
 	t_own_knowledge	*ok;
 
-	ok = calloc(s->n_philos, sizeof(t_own_knowledge));
+	ok = malloc(s->n_philos * sizeof(t_own_knowledge));
 	if (!ok)
 		return (NULL);
 	i = 0;

@@ -35,6 +35,7 @@ pthread_mutex_t	*create_forks(int n_forks)
 	forks = malloc(sizeof(pthread_mutex_t) * n_forks);
 	if (!forks)
 		return (NULL);
+	memset(forks, 0, sizeof(pthread_mutex_t) * n_forks);
 	i = 0;
 	while (i < n_forks)
 	{

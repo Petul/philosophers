@@ -6,12 +6,13 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:46:26 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/23 11:26:45 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:37:55 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 #include "philosophers.h"
 
 static int	launch_philos(t_own_knowledge *ok, t_table *t, pid_t *children)
@@ -53,7 +54,7 @@ int	run_simulation(t_table *t)
 	children = malloc(sizeof(pid_t) * (t->n_philos + 1));
 	if (!children)
 		return (-1);
-	ft_memset(children, 0, sizeof(pid_t) * (t->n_philos + 1));
+	memset(children, 0, sizeof(pid_t) * (t->n_philos + 1));
 	t->t_sim_start = get_milliseconds() + (2 * t->n_philos);
 	init_philo(&ok, t);
 	if (launch_philos(&ok, t, children) < 0)
