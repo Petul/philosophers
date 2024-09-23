@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
-#include <sys/time.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include "philosophers.h"

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "philosophers.h"
-#include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
 

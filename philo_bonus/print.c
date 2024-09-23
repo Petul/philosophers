@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include <semaphore.h>
 #include "philosophers.h"
 
 size_t	pprint(t_own_knowledge *ok, char *fstr)

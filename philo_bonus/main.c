@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
-#include <sys/time.h>
-#include <pthread.h>
 #include "philosophers.h"
 
 static int	parse_args(int argc, char **argv, t_settings *s)

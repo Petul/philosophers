@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <pthread.h>
-#include <stdlib.h>
 #include "philosophers.h"
 
 int	prepare_table(t_table *table, t_settings *s, pthread_mutex_t *mtx_forks,

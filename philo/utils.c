@@ -11,11 +11,8 @@
 /* ************************************************************************** */
 
 #include "philosophers.h"
-#include <sys/types.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <stdio.h> //
 
 size_t	get_milliseconds(void)
 {
