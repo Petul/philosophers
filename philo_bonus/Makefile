@@ -6,11 +6,11 @@
 #    By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/04 14:53:17 by pleander          #+#    #+#              #
-#    Updated: 2024/09/23 11:39:23 by pleander         ###   ########.fr        #
+#    Updated: 2024/09/23 11:42:03 by pleander         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME := philosophers
+NAME := philo_bonus
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
 CFILES := actions.c \
