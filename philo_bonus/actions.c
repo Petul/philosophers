@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 08:45:23 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/20 13:43:22 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:30:03 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	eat(t_own_knowledge *ok)
 void	rest(t_own_knowledge *ok)
 {
 	size_t	t;
+
 	t = pprint(ok, "%04zu %d is sleeping\n");
 	sleep_until(t + ok->table->t_sleep);
 }

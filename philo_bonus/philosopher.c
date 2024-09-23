@@ -10,11 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <semaphore.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <pthread.h>
-#include <stdlib.h>
 #include "philosophers.h"
 
 static void	check_death(t_own_knowledge *ok)

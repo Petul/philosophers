@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:24:03 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/20 10:48:38 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:25:46 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,23 +63,28 @@ typedef struct s_own_knowledge
 	t_table					*table;
 }	t_own_knowledge;
 
-int				ft_atoi(const char *str);
-void			philo(t_own_knowledge *ok);
-size_t			get_milliseconds(void);
-int				run_simulation(t_table *table);
-void			delay_start(t_own_knowledge *ok);
-int				acquire_forks(t_own_knowledge *ok);
-void			release_forks(t_own_knowledge *ok);
-size_t			get_last_meal(t_own_knowledge *ok);
-void			set_last_meal(t_own_knowledge *ok);
-int				is_number(char	*str);
-int				prepare_table(t_table *table, t_settings *s);
-int				rest_or_die(t_own_knowledge *ok, size_t	msec);
-size_t			pprint(t_own_knowledge *ok, char *fstr);
-char			*make_sem_name(char *basename, size_t id);
-void			sleep_until(size_t tn);
-void			think(t_own_knowledge *ok);
-void			eat(t_own_knowledge *ok);
-void			rest(t_own_knowledge *ok);
+int		ft_atoi(const char *str);
+void	philo(t_own_knowledge *ok);
+size_t	get_milliseconds(void);
+int		run_simulation(t_table *table);
+void	delay_start(t_own_knowledge *ok);
+int		acquire_forks(t_own_knowledge *ok);
+void	release_forks(t_own_knowledge *ok);
+size_t	get_last_meal(t_own_knowledge *ok);
+void	set_last_meal(t_own_knowledge *ok);
+int		is_number(char	*str);
+int		prepare_table(t_table *table, t_settings *s);
+int		rest_or_die(t_own_knowledge *ok, size_t	msec);
+size_t	pprint(t_own_knowledge *ok, char *fstr);
+char	*make_sem_name(char *basename, size_t id);
+void	sleep_until(size_t tn);
+void	think(t_own_knowledge *ok);
+void	eat(t_own_knowledge *ok);
+void	rest(t_own_knowledge *ok);
+void	*ft_memset(void *b, int c, size_t len);
+void	init_philo(t_own_knowledge *ok, t_table *t);
+void	kill_philos(pid_t *children);
+int		init_philo_semaphores(t_own_knowledge *ok);
+void	meal_monitor(t_table *t);
 
 #endif

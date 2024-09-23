@@ -80,5 +80,7 @@ int	main(int argc, char **argv)
 	}
 	clear_semaphores();
 	retval = philosophers(&s);
+	if (retval != 0)
+		write(2, "Error\n", 6);
 	return (retval);
 }

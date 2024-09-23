@@ -6,7 +6,7 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 14:16:17 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/19 15:17:30 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:30:23 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ static size_t	count_len(size_t id)
 
 static size_t	ft_strlen(char *str)
 {
-	size_t i;
-	
+	size_t	i;
+
 	i = 0;
 	while (*str)
 	{
