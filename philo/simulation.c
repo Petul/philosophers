@@ -88,8 +88,7 @@ int	run_simulation(t_table *table, t_own_knowledge *ok)
 	size_t	sim_start;
 
 	sim_start = get_milliseconds();
-	ok->table->t_sim_start = sim_start;
-	ok->table->t_sim_start += START_DELAY;
+	ok->table->t_sim_start = sim_start + START_DELAY * table->n_philos;
 	i = 0;
 	while (i < table->n_philos)
 	{

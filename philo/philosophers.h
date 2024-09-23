@@ -19,7 +19,7 @@
 # include <stddef.h>
 # include <pthread.h>
 
-# define START_DELAY 100
+# define START_DELAY 1
 
 typedef enum e_state
 {
