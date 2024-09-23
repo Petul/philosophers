@@ -6,12 +6,13 @@
 /*   By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 12:37:12 by pleander          #+#    #+#             */
-/*   Updated: 2024/09/13 15:13:50 by pleander         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:43:12 by pleander         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
 #include <stdlib.h>
+#include <string.h>
 #include "philosophers.h"
 
 void	destroy_forks(pthread_mutex_t *forks, int n_forks)
@@ -53,8 +54,11 @@ int	acquire_forks(t_own_knowledge *ok)
 {
 	while (1)
 	{
+		if (is_sim_running(ok->table) != 1)
+			return (-1);
 		pthread_mutex_lock(&ok->table->take_forks_mtx);
-		if (get_state(ok->left_philo) != EATING
+		if (ok->mtx_fork1 != ok->mtx_fork2
+			&& get_state(ok->left_philo) != EATING
 			&& get_state(ok->right_philo) != EATING)
 		{
 			pthread_mutex_lock(ok->mtx_fork1);

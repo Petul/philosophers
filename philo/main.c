@@ -50,7 +50,10 @@ static void	hand_out_utensils(t_own_knowledge *ok, t_table *table, int i)
 	{
 		ok[i].left_philo = &ok[table->n_philos - 1];
 		ok[i].right_philo = &ok[i + 1];
-		ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
+		if (table->n_philos == 1)
+			ok[i].mtx_fork2 = ok[i].mtx_fork1;
+		else
+			ok[i].mtx_fork2 = &table->mtx_forks[i + 1];
 	}
 	else if (i == table->n_philos - 1)
 	{
