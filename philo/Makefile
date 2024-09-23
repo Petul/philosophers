@@ -6,14 +6,13 @@
 #    By: pleander <pleander@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/04 14:53:17 by pleander          #+#    #+#              #
-#    Updated: 2024/09/13 14:35:25 by pleander         ###   ########.fr        #
+#    Updated: 2024/09/23 11:39:32 by pleander         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := philosophers
 CC := cc
-#CFLAGS := -Wall -Wextra -Werror
-CFLAGS := -Wall -Wextra -g
+CFLAGS := -Wall -Wextra -Werror
 CFILES := forks.c \
 		  ft_atoi.c \
 		  last_meal.c \
