@@ -40,7 +40,7 @@ int	init_philo_semaphores(t_own_knowledge *ok)
 {
 	char	*sem_name;
 
-	sem_name = make_sem_name("sem_last_meal", ok->id);
+	sem_name = make_sem_name("/sem_last_meal", ok->id);
 	sem_unlink(sem_name);
 	ok->sem_last_meal = sem_open(sem_name, O_CREAT, 0644, 1);
 	free(sem_name);

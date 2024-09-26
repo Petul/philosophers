@@ -20,12 +20,12 @@
 # include <semaphore.h>
 # include <unistd.h>
 
-# define SEM_FORKS "sem_forks"
-# define SEM_DEATH "sem_death"
-# define SEM_GRAB_FORKS "sem_grab_forks"
-# define SEM_PRINT "sem_print"
-# define SEM_SIM_ENDED "sem_sim_print"
-# define SEM_EATEN_ENOUGH "sem_eaten_enough"
+# define SEM_FORKS "/sem_forks"
+# define SEM_DEATH "/sem_death"
+# define SEM_GRAB_FORKS "/sem_grab_forks"
+# define SEM_PRINT "/sem_print"
+# define SEM_SIM_ENDED "/sem_sim_print"
+# define SEM_EATEN_ENOUGH "/sem_eaten_enough"
 
 typedef struct s_settings
 {
