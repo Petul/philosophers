@@ -17,9 +17,11 @@ static int	parse_args(int argc, char **argv, t_settings *s)
 {
 	if (argc < 5 || argc > 6)
 		return (-1);
-	if (ft_atoi(argv[1]) < 1 || ft_atoi(argv[2]) < 0 || ft_atoi(argv[3]) < 0 || ft_atoi(argv[4]) < 0)
+	if (ft_atoi(argv[1]) < 1 || ft_atoi(argv[2]) < 0 || ft_atoi(argv[3]) < 0
+		|| ft_atoi(argv[4]) < 0)
 		return (-1);
-	if (!is_number(argv[1]) || !is_number(argv[2]) || !is_number(argv[3]) || !is_number(argv[4]))
+	if (!is_number(argv[1]) || !is_number(argv[2]) || !is_number(argv[3])
+		|| !is_number(argv[4]))
 		return (-1);
 	s->n_philos = ft_atoi(argv[1]);
 	s->t_die = (size_t)ft_atoi(argv[2]);
